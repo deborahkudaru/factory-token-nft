@@ -4,12 +4,14 @@ pragma solidity ^0.8.28;
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
 contract NFT {
-    // string public name = "BEE NFT";
-    // string public symbol = "BEE";
+    string public name;
+    string public symbol;
+    uint public nextTokenIdToMint;
     mapping(address => uint256) private balances;
     mapping(uint256 => address) private owners;
     mapping(uint256 => address) private tokenApprovals;
     mapping(address => mapping(address => bool)) private operatorApprovals;
+    mapping(uint256 => string) private tokenUris;
 
     event Transfer(
         address indexed _from,
@@ -28,8 +30,9 @@ contract NFT {
     );
 
     constructor(string memory _name, string memory _symbol) {
-        // name = _name;
-        // symbol = _symbol;
+        name = _name;
+        symbol = _symbol;
+        nextTokenIdToMint = 1;
     }
 
     function balanceOf(address _owner) external view returns (uint256) {
@@ -51,7 +54,11 @@ contract NFT {
         emit Transfer(msg.sender, _to, _tokenId);
     }
 
-    function transferFrom(address _from, address _to, uint256 _tokenId) external {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _tokenId
+    ) external {
         require(owners[_tokenId] == _from, "NFT: not owner");
         require(_to != address(0), "NFT: transfer to the zero address");
 
@@ -70,8 +77,7 @@ contract NFT {
     }
 
     function setApprovalForAll(address _operator, bool _approved) external {
-        emit ApprovalForAll(msg.sender, 
-        _operator, _approved);
+        emit ApprovalForAll(msg.sender, _operator, _approved);
     }
 
     function isApprovedForAll(
@@ -79,5 +85,17 @@ contract NFT {
         address _operator
     ) external view returns (bool) {
         return operatorApprovals[_owner][_operator];
+    }
+
+    function mintTo(address _to, string memory _uri) public {
+        owners[nextTokenIdToMint] = _to;
+        balances[_to] += 1;
+        tokenUris[nextTokenIdToMint] = _uri;
+        emit Transfer(address(0), _to, nextTokenIdToMint);
+        nextTokenIdToMint += 1;
+    }
+
+    function tokenURI(uint256 _tokenId) public view returns (string memory) {
+        return tokenUris[_tokenId];
     }
 }
