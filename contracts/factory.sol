@@ -2,21 +2,22 @@
 pragma solidity ^0.8.28;
 
 import "./token/Token.sol";
+import "./token/NFT.sol";
 
 contract factory {
+    // erc20
     address[] public tokens;
     uint256 public tokenCount;
     Token[] tokenInstance;
-    // event TokenCreated(address tokenAddress, string name, string symbol, uint256 supply);
+
+    // nft
+    NFT[] nftInstance;
+    uint256 public nftCount;
+    NFT[] public nfts;
 
     event TokenDeployed(address tokenAddress);
 
-    // function createToken(string memory _name, string memory _symbol, uint256 _supply) public {
-    //     Token newToken = new Token(_name, _symbol, _supply);
-    //     tokens.push(address(newToken));
-    //     tokenCount++;
-    //     emit TokenCreated(address(newToken), _name, _symbol, _supply);
-    // }
+    event NFTDeployed(address nftAddress);
 
     function deployToken(
         string calldata _name,
@@ -31,10 +32,23 @@ contract factory {
 
         tokenCount++;
 
-        //  emit TokenCreated(newToken, _name, _symbol, _supply);
         emit TokenDeployed(address(token));
 
         return address(token);
     }
 
+    function deployNFT(
+        string calldata _name,
+        string calldata _symbol
+    ) public returns (address) {
+        NFT nft = new NFT(_name, _symbol);
+
+        nfts.push(nft);
+
+        nftCount++;
+
+        emit NFTDeployed(address(nft));
+
+        return address(nft);
+    }
 }
