@@ -2,22 +2,23 @@
 pragma solidity ^0.8.28;
 
 import "./token/Token.sol";
-import "./token/NFT.sol";
+import "./token/MyNFT.sol";
 
-contract factory {
-    // erc20
+contract Factory {
+    // ERC20
     address[] public tokens;
     uint256 public tokenCount;
-    Token[] tokenInstance;
 
-    // nft
-    NFT[] nftInstance;
+    // NFT
+    address[] public nfts;
     uint256 public nftCount;
-    NFT[] public nfts;
 
-    event TokenDeployed(address tokenAddress);
-
-    event NFTDeployed(address nftAddress);
+    event TokenDeployed(
+        address indexed tokenAddress,
+        string name,
+        string symbol
+    );
+    event NFTDeployed(address indexed nftAddress, string name, string symbol);
 
     function deployToken(
         string calldata _name,
@@ -26,29 +27,31 @@ contract factory {
     ) public returns (address) {
         Token token = new Token(_name, _symbol, _supply);
 
-        token.transfer(msg.sender, _supply);
+        address tokenAddress = address(token);
 
-        tokens.push(address(token));
+        tokens.push(tokenAddress);
 
         tokenCount++;
 
-        emit TokenDeployed(address(token));
+        emit TokenDeployed(tokenAddress, _name, _symbol);
 
-        return address(token);
+        return tokenAddress;
     }
 
     function deployNFT(
         string calldata _name,
         string calldata _symbol
     ) public returns (address) {
-        NFT nft = new NFT(_name, _symbol);
+        MyNFT nft = new MyNFT(_name, _symbol);
 
-        nfts.push(nft);
+        address nftAddress = address(nft);
+
+        nfts.push(nftAddress);
 
         nftCount++;
 
-        emit NFTDeployed(address(nft));
+        emit NFTDeployed(nftAddress, _name, _symbol);
 
-        return address(nft);
+        return nftAddress;
     }
 }
