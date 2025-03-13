@@ -3,68 +3,67 @@ import "@nomicfoundation/hardhat-toolbox";
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-module.exports = {
+const config: HardhatUserConfig = {
   defaultNetwork: 'testnet',
-
   networks: {
-     hardhat: {
-     },
-     testnet: {
-        url: 'https://rpc.test.btcs.network',
-        accounts: [process.env.PRIVATE_KEY!],
-        chainId: 1115,
-     },
-     mainnet: {
-       url: 'https://rpc.coredao.org',
-       accounts: [process.env.PRIVATE_KEY],
-       chainId: 1116,
+    hardhat: {},
+    testnet: {
+      url: 'https://rpc.test.btcs.network',
+      accounts: [process.env.PRIVATE_KEY as string],
+      chainId: 1115,
+    },
+    mainnet: {
+      url: 'https://rpc.coredao.org',
+      accounts: [process.env.PRIVATE_KEY as string],
+      chainId: 1116,
     },
   },
   etherscan: {
-   apiKey: {
-     testnet: process.env.CORE_TEST_SCAN_KEY!,
-     mainnet: process.env.CORE_MAIN_SCAN_KEY!,
-   },
-   customChains: [
-     {
-       network: "testnet",
-       chainId: 1115,
-       urls: {
-         apiURL: "https://api.test.btcs.network/api",
-         browserURL: "https://scan.test.btcs.network/"
-       }
-     },
-     {
-       network: "mainnet",
-       chainId: 1116,
-       urls: {
-         apiURL: "https://openapi.coredao.org/api",
-         browserURL: "https://scan.coredao.org/"
-       }
-     }
-   ]
- },
-
- solidity: {
-  compilers: [
-    {
-       version: '0.8.28',
-       settings: {
+    apiKey: {
+      testnet: process.env.CORE_TEST_SCAN_KEY as string,
+      mainnet: process.env.CORE_MAIN_SCAN_KEY as string,
+    },
+    customChains: [
+      {
+        network: "testnet",
+        chainId: 1115,
+        urls: {
+          apiURL: "https://api.test.btcs.network/api",
+          browserURL: "https://scan.test.btcs.network/"
+        }
+      },
+      {
+        network: "mainnet",
+        chainId: 1116,
+        urls: {
+          apiURL: "https://openapi.coredao.org/api",
+          browserURL: "https://scan.coredao.org/"
+        }
+      }
+    ]
+  },
+  solidity: {
+    compilers: [
+      {
+        version: '0.8.28',
+        settings: {
           evmVersion: 'paris',
           optimizer: {
-             enabled: true,
-             runs: 200,
+            enabled: true,
+            runs: 200,
           },
-       },
-    },
-  ],
-},
-paths: {
-     sources: './contracts',
-     cache: './cache',
-     artifacts: './artifacts',
+        },
+      },
+    ],
+  },
+  paths: {
+    sources: './contracts',
+    cache: './cache',
+    artifacts: './artifacts',
   },
   mocha: {
-     timeout: 20000,
+    timeout: 20000,
   },
 };
+
+export default config;
