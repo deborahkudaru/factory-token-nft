@@ -5,19 +5,22 @@ import "./token/Token.sol";
 import "./token/MyNFT.sol";
 
 contract Factory {
-    // ERC20
-    address[] public tokens;
-    uint256 public tokenCount;
+    struct TokenInfo {
+        address tokenAddress;
+        string name;
+        string symbol;
+    }
 
-    // NFT
-    address[] public nfts;
-    uint256 public nftCount;
+    struct NFTInfo {
+        address nftAddress;
+        string name;
+        string symbol;
+    }
 
-    event TokenDeployed(
-        address indexed tokenAddress,
-        string name,
-        string symbol
-    );
+    TokenInfo[] public tokens;
+    NFTInfo[] public nfts;
+
+    event TokenDeployed(address indexed tokenAddress, string name, string symbol);
     event NFTDeployed(address indexed nftAddress, string name, string symbol);
 
     function deployToken(
@@ -26,15 +29,11 @@ contract Factory {
         uint256 _supply
     ) public returns (address) {
         Token token = new Token(_name, _symbol, _supply);
-
         address tokenAddress = address(token);
 
-        tokens.push(tokenAddress);
-
-        tokenCount++;
+        tokens.push(TokenInfo(tokenAddress, _name, _symbol));
 
         emit TokenDeployed(tokenAddress, _name, _symbol);
-
         return tokenAddress;
     }
 
@@ -43,15 +42,19 @@ contract Factory {
         string calldata _symbol
     ) public returns (address) {
         MyNFT nft = new MyNFT(_name, _symbol);
-
         address nftAddress = address(nft);
 
-        nfts.push(nftAddress);
-
-        nftCount++;
+        nfts.push(NFTInfo(nftAddress, _name, _symbol));
 
         emit NFTDeployed(nftAddress, _name, _symbol);
-
         return nftAddress;
+    }
+
+    function getTokens() public view returns (TokenInfo[] memory) {
+        return tokens;
+    }
+
+    function getNFTs() public view returns (NFTInfo[] memory) {
+        return nfts;
     }
 }
