@@ -1,4 +1,4 @@
-import { ethers } from "hardhat";
+import { ethers, run } from "hardhat";
 
 async function main(): Promise<{ factory: string }> {
   console.log("Starting Factory contract deployment...");
@@ -10,6 +10,21 @@ async function main(): Promise<{ factory: string }> {
 
   const factoryAddress = await factory.getAddress();
   console.log(`Factory contract deployed to: ${factoryAddress}`);
+
+  // Wait for Etherscan to index the contract (30s delay)
+  console.log("Waiting for Etherscan indexing...");
+  await new Promise((resolve) => setTimeout(resolve, 30000));
+
+  // Verify contract on Etherscan
+  try {
+    await run("verify:verify", {
+      address: factoryAddress,
+      constructorArguments: [], // Add constructor args if needed
+    });
+    console.log("Contract verified successfully! 🎉");
+  } catch (error) {
+    console.error("Verification failed:", error);
+  }
 
   // Fetch initial token and NFT counts
   const deployedTokens = await factory.getTokens();
